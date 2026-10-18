@@ -115,23 +115,30 @@ const LEVELS=[
  sky:['#5f9ec7','#7fb9dc','#a9d9ec'],water:['#5b93b8','#4f86ac','#44789c','#3a6a8c'],
  hi:'#d6ecf2',refl:'rgba(190,225,230,0.22)',spark:'#e2f4f6',
  sc1:'#5d8f57',sc2:'#3a6b3f',g1:'#2f6b33',g2:'#234f27',cat:'#7a4f2b',
- pool:[['PERCH',0.55],['CRUCIAN',1]]},
+ pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
 {name:'MOUNTAIN LAKE',win:315,scene:'mountain',biteMin:9000,biteMax:19000,
  sky:['#4a7fb5','#6d9cc9','#9dc0de'],water:['#4a7ba6','#3f6d97','#356088','#2c5277'],
  hi:'#dfe9f2',refl:'rgba(215,232,240,0.20)',spark:'#e8f2fa',
  m1:'#7d95ad',m2:'#4a6580',g1:'#2e5d4a',g2:'#224738',cat:'#6b4f2b',
- pool:[['PERCH',0.30],['CRUCIAN',0.60],['CARP',1]]},
+ pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
 {name:'CITY POND',win:285,scene:'city',biteMin:8000,biteMax:18000,
  sky:['#3a2f5e','#7a4468','#d98a5a'],water:['#3a4a66','#33415a','#2c3850','#253046'],
  hi:'#f0b080',refl:'rgba(255,150,80,0.30)',spark:'#ffd9a0',
  b1:'#2a2438',b2:'#3a3150',g1:'#1e2a24',g2:'#15201b',cat:'#4a3320',
- pool:[['CARP',0.40],['PIKE',0.85],['PERCH',1]]}
+ pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
+{name:'SAND QUARRY',win:255,scene:'quarry',biteMin:8000,biteMax:18000,
+ sky:['#8fc0e0','#b0d6ea','#d8ecf4'],water:['#57a08c','#4a9080','#3d7f73','#316d64'],
+ hi:'#e9dca6',refl:'rgba(210,240,225,0.20)',spark:'#e6f6ec',
+ d1:'#dcc890',d2:'#c6ab72',d3:'#ad9058',p1:'#2e5533',p2:'#4f7a40',g1:'#8a9a4a',g2:'#67763a',cat:'#a08850',
+ pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]}
 ];
 const FISH={
  PERCH:{n:'PERCH',s0:18,s1:38,len:10},
  CRUCIAN:{n:'CRUCIAN',s0:14,s1:30,len:9},
  CARP:{n:'CARP',s0:35,s1:72,len:14},
- PIKE:{n:'PIKE',s0:40,s1:88,len:17}
+ PIKE:{n:'PIKE',s0:40,s1:88,len:17},
+ TROUT:{n:'TROUT',s0:22,s1:48,len:12},
+ BREAM:{n:'BREAM',s0:35,s1:70,len:15}
 };
 
 /* ================= FISH SPRITES ================= */
@@ -182,6 +189,31 @@ FISH_SPR.PIKE=spr(30,11,function(g){
  P(g,D,12,9,4,2);
  P(g,D,27,2,3,4);P(g,D,27,6,3,4);P(g,D,26,3,2,6);
 });
+FISH_SPR.TROUT=spr(26,11,function(g){
+ const B='#7f9a78',D='#43583c',L='#d9e4cf',S='#d98282';
+ P(g,B,4,3,18,6);P(g,B,6,2,14,1);P(g,B,8,8,13,1);P(g,B,2,4,2,4);P(g,B,22,4,2,4);
+ P(g,L,5,7,17,2);
+ P(g,S,5,5,14,1);
+ for(let i=0;i<5;i++)P(g,D,8+i*3,3+((i%2)*2),1,1);
+ P(g,D,10,0,4,2);
+ P(g,'#101010',3,4,2,2);P(g,'#ffffff',3,4,1,1);
+ P(g,D,6,3,1,4);
+ P(g,D,24,2,2,4);P(g,D,24,7,2,3);P(g,D,23,3,2,6);
+});
+FISH_SPR.BREAM=spr(26,15,function(g){
+ const B='#b5a86e',D='#6b5e32',L='#e8e2c6';
+ P(g,B,8,3,7,1);P(g,B,6,4,12,1);P(g,B,4,5,15,1);
+ P(g,B,2,6,18,1);P(g,B,1,7,19,2);P(g,B,2,9,18,1);
+ P(g,B,4,10,15,1);P(g,B,6,11,12,1);P(g,B,9,12,6,1);
+ P(g,B,20,7,2,2);
+ P(g,D,8,3,7,1);P(g,D,6,4,12,1);
+ P(g,L,6,11,12,1);P(g,L,9,12,6,1);
+ P(g,D,6,6,1,5);
+ P(g,D,11,1,3,2);
+ P(g,D,23,5,3,3);P(g,D,23,9,3,3);P(g,D,22,6,2,4);
+ P(g,D,9,13,3,1);P(g,D,15,12,2,1);P(g,D,17,11,2,1);
+ P(g,'#101010',3,7,2,2);P(g,'#ffffff',3,7,1,1);
+});
 
 /* ================= BACKGROUND ================= */
 function peak(g,c,x0,baseY,w,h){
@@ -206,18 +238,24 @@ function buildBG(){
  P(b,L.sky[0],0,0,W,Math.round(HY*0.45));
  P(b,L.sky[1],0,Math.round(HY*0.45),W,Math.round(HY*0.35)+1);
  P(b,L.sky[2],0,Math.round(HY*0.80),W,HY-Math.round(HY*0.80)+1);
- if(level===0){
+ if(L.scene==='forest'){
   P(b,'#fff3b0',Math.round(W*0.72),Math.round(HY*0.22),4,4);
   P(b,'#fffce0',Math.round(W*0.72)+1,Math.round(HY*0.22)+1,2,2);
   P(b,'rgba(255,255,255,0.85)',Math.round(W*0.18),Math.round(HY*0.30),8,2);
   P(b,'rgba(255,255,255,0.85)',Math.round(W*0.18)+2,Math.round(HY*0.30)-1,4,1);
   P(b,'rgba(255,255,255,0.7)',Math.round(W*0.55),Math.round(HY*0.55),6,1);
- }else if(level===1){
+ }else if(L.scene==='mountain'){
   P(b,'#eef6fb',Math.round(W*0.70),Math.round(HY*0.20),3,3);
   P(b,'rgba(255,255,255,0.6)',Math.round(W*0.25),Math.round(HY*0.45),10,1);
- }else{
+ }else if(L.scene==='city'){
   P(b,'#ffb347',Math.round(W*0.30),HY-5,5,4);
   P(b,'#ffd98a',Math.round(W*0.30)+1,HY-4,3,2);
+ }else{/* quarry: high sun + heat haze */
+  P(b,'#fff3b0',Math.round(W*0.22),Math.round(HY*0.18),4,4);
+  P(b,'#fffce0',Math.round(W*0.22)+1,Math.round(HY*0.18)+1,2,2);
+  P(b,'rgba(255,255,255,0.8)',Math.round(W*0.55),Math.round(HY*0.35),9,2);
+  P(b,'rgba(255,255,255,0.6)',Math.round(W*0.55)+3,Math.round(HY*0.35)-1,4,1);
+  P(b,'rgba(255,255,255,0.5)',Math.round(W*0.80),Math.round(HY*0.60),5,1);
  }
  if(L.scene==='forest'){
   for(let x=0;x<W;x+=3){const h=4+((R()*5)|0);P(b,L.sc1,x,HY-h,3,h);}
@@ -239,6 +277,18 @@ function buildBG(){
   /* fir trees along the shore */
   for(let x=1;x<W-3;x+=7){
    if(R()<0.62){const th=5+((R()*6)|0);fir(b,x+((R()*4)|0)-2,HY,th,L.g2,L.g1);}
+  }
+ }else if(L.scene==='quarry'){
+  /* sand dunes on the far bank */
+  let dx=-3;
+  while(dx<W-6){
+   const dw=16+((R()*26)|0),dh=4+((R()*6)|0),rc=R();
+   peak(b,rc<0.45?L.d1:(rc<0.75?L.d2:L.d3),dx,HY,dw,dh);
+   dx+=dw-3-((R()*5)|0);
+  }
+  /* pines on the shore */
+  for(let x=1;x<W-4;x+=6){
+   if(R()<0.58)fir(b,x+((R()*4)|0)-2,HY,6+((R()*8)|0),L.p1,L.p2);
   }
  }else{
   let x=0;
@@ -422,7 +472,7 @@ function endCatch(){
 }
 function nextLevel(){
  level++;
- if(level>=3){
+ if(level>=LEVELS.length){
   setState('win');
   tone(523,0.1,'square',0.18);tone(659,0.1,'square',0.18,0,0.1);
   tone(784,0.1,'square',0.18,0,0.2);tone(1046,0.28,'square',0.18,0,0.3);
