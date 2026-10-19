@@ -242,27 +242,25 @@ FISH_SPR.BREAM=spr(26,15,function(g){
  P(g,D,9,13,3,1);P(g,D,15,12,2,1);P(g,D,17,11,2,1);
  P(g,'#101010',3,7,2,2);P(g,'#ffffff',3,7,1,1);
 });
-FISH_SPR.SANDALIQUE=spr(28,16,function(g){
- /* sandal per user sketch: chunky brown plank sole, small green toe block,
-    mid green block, light-green top strip, big tilted heel strap at the end */
- const C={G:'#44603a',L:'#8aa579',B:'#5c5344'};
+FISH_SPR.SANDALIQUE=spr(28,14,function(g){
+ /* sandal per user sketch: brown plank sole w/ dark stripe, green straps
+    w/ dark edge for volume, small toe block, light strip, tilted heel strap */
+ const C={G:'#44603a',D:'#324a29',L:'#8aa579',B:'#5c5344',R:'#413a2f'};
  const M=[
  '............................',
  '............................',
- '........................GGG.',
- '.......................GGGG.',
- '..........GGGG........GGGG..',
- '..........GGGG........GGGG..',
- '..........GGGGLLLLLLLGGGG...',
- '...GGGG...GGGGLLLLLLGGGG....',
- '...GGGG...GGGG.....GGGG.....',
- '...GGGG...GGGG.....GGGG.....',
+ '........................GGD.',
+ '.......................GGGD.',
+ '..........GGGD........GGGD..',
+ '..........GGGD........GGGD..',
+ '..........GGGDLLLLLLLGGGD...',
+ '...GGGD...GGGGLLLLLLGGGD....',
+ '...GGGD...GGGD.....GGGD.....',
+ '...GGGD...GGGD.....GGGD.....',
  '..BBBBBBBBBBBBBBBBBBBBBBBBB.',
  '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
- '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
- '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
- '..BBBBBBBBBBBBBBBBBBBBBBBBB.',
- '....BBBBBBBBBBBBBBBBBBBB....'];
+ '.RRRRRRRRRRRRRRRRRRRRRRRRRRR',
+ '..BBBBBBBBBBBBBBBBBBBBBBBBB.'];
  for(let y=0;y<M.length;y++)for(let x=0;x<M[y].length;x++){const ch=M[y].charAt(x);if(C[ch])P(g,C[ch],x,y,1,1);}
 });
 
