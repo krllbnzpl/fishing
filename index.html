@@ -53,7 +53,7 @@ const FONT={
 'A':'010101111101101','B':'110101110101110','C':'011100100100011','D':'110101101101110',
 'E':'111100110100111','F':'111100110100100','G':'011100101101011','H':'101101111101101',
 'I':'111010010010111','J':'011001001101010','K':'101101110101101','L':'100100100100111',
-'M':'101111101101101','N':'110101101101101','O':'111101101101111','P':'110101110100100',
+'M':'101111101101101','N':'110101101101101','O':'111101101101111','P':'110101110100100','Q':'111101101111001',
 'R':'110101110101101','S':'011100010001110','T':'111010010010010','U':'101101101101111',
 'V':'101101101101010','W':'101101101111101','X':'101101010101101','Y':'101101010010010',
 'Z':'111001010100111',
@@ -115,22 +115,22 @@ const LEVELS=[
  sky:['#5f9ec7','#7fb9dc','#a9d9ec'],water:['#5b93b8','#4f86ac','#44789c','#3a6a8c'],
  hi:'#d6ecf2',refl:'rgba(190,225,230,0.22)',spark:'#e2f4f6',
  sc1:'#5d8f57',sc2:'#3a6b3f',g1:'#2f6b33',g2:'#234f27',cat:'#7a4f2b',
- pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
+ pool:[['PERCH',0.265],['CRUCIAN',0.21],['CARP',0.21],['BREAM',0.21],['PIKE',0.035],['SANDALIQUE',0.04],['TROUT',0.015],['CHEBAQUE',1]]},
 {name:'MOUNTAIN LAKE',win:315,scene:'mountain',biteMin:9000,biteMax:19000,
  sky:['#4a7fb5','#6d9cc9','#9dc0de'],water:['#4a7ba6','#3f6d97','#356088','#2c5277'],
  hi:'#dfe9f2',refl:'rgba(215,232,240,0.20)',spark:'#e8f2fa',
  m1:'#7d95ad',m2:'#4a6580',g1:'#2e5d4a',g2:'#224738',cat:'#6b4f2b',
- pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
+ pool:[['PERCH',0.265],['CRUCIAN',0.21],['CARP',0.21],['BREAM',0.21],['PIKE',0.035],['SANDALIQUE',0.04],['TROUT',0.015],['CHEBAQUE',1]]},
 {name:'CITY POND',win:285,scene:'city',biteMin:8000,biteMax:18000,
  sky:['#3a2f5e','#7a4468','#d98a5a'],water:['#3a4a66','#33415a','#2c3850','#253046'],
  hi:'#f0b080',refl:'rgba(255,150,80,0.30)',spark:'#ffd9a0',
  b1:'#2a2438',b2:'#3a3150',g1:'#1e2a24',g2:'#15201b',cat:'#4a3320',
- pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]},
+ pool:[['PERCH',0.265],['CRUCIAN',0.21],['CARP',0.21],['BREAM',0.21],['PIKE',0.035],['SANDALIQUE',0.04],['TROUT',0.015],['CHEBAQUE',1]]},
 {name:'SAND QUARRY',win:255,scene:'quarry',biteMin:8000,biteMax:18000,
  sky:['#8fc0e0','#b0d6ea','#d8ecf4'],water:['#57a08c','#4a9080','#3d7f73','#316d64'],
  hi:'#e9dca6',refl:'rgba(210,240,225,0.20)',spark:'#e6f6ec',
  d1:'#dcc890',d2:'#c6ab72',d3:'#ad9058',p1:'#2e5533',p2:'#4f7a40',g1:'#8a9a4a',g2:'#67763a',cat:'#a08850',
- pool:[['PERCH',0.275],['CRUCIAN',0.22],['CARP',0.22],['BREAM',0.22],['PIKE',0.035],['TROUT',1]]}
+ pool:[['PERCH',0.265],['CRUCIAN',0.21],['CARP',0.21],['BREAM',0.21],['PIKE',0.035],['SANDALIQUE',0.04],['TROUT',0.015],['CHEBAQUE',1]]}
 ];
 const FISH={
  PERCH:{n:'PERCH',s0:18,s1:38,len:10},
@@ -138,9 +138,11 @@ const FISH={
  CARP:{n:'CARP',s0:35,s1:72,len:14},
  PIKE:{n:'PIKE',s0:40,s1:88,len:17},
  TROUT:{n:'TROUT',s0:22,s1:48,len:12},
- BREAM:{n:'BREAM',s0:35,s1:70,len:15}
+ CHEBAQUE:{n:'CHEBAQUE',s0:12,s1:26,len:8},
+ BREAM:{n:'BREAM',s0:35,s1:70,len:15},
+ SANDALIQUE:{n:'SANDALIQUE',s0:24,s1:31,len:13,junk:1}
 };
-const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','PIKE','TROUT'];/* stats display order: common -> rare */
+const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','PIKE','TROUT','CHEBAQUE'];/* stats display order: common -> rare */
 
 /* ================= FISH SPRITES ================= */
 function spr(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c;}
@@ -201,6 +203,31 @@ FISH_SPR.TROUT=spr(26,11,function(g){
  P(g,D,6,3,1,4);
  P(g,D,24,2,2,4);P(g,D,24,7,2,3);P(g,D,23,3,2,6);
 });
+FISH_SPR.CHEBAQUE=spr(26,14,function(g){
+ /* chebak (Siberian roach): high oval silver body, blue-grey back, white belly,
+    RED iris eye, red fins, forked red tail */
+ const B='#b6c3c9',D='#5c6f7d',L='#e9eff1',F='#cd6a4f',S='#93a3ab';
+ P(g,B,7,2,11,1);P(g,B,5,3,15,1);P(g,B,3,4,19,1);P(g,B,2,5,20,1);
+ P(g,B,2,6,20,1);P(g,B,2,7,20,1);P(g,B,3,8,19,1);P(g,B,5,9,15,1);
+ P(g,B,7,10,11,1);P(g,B,9,11,7,1);
+ P(g,D,8,2,9,1);
+ P(g,D,6,3,3,1);P(g,D,17,3,3,1);
+ P(g,D,4,4,3,1);P(g,D,19,4,3,1);
+ P(g,D,3,5,2,1);P(g,D,20,5,2,1);
+ P(g,L,7,10,10,1);P(g,L,9,11,7,1);
+ P(g,L,4,8,2,1);P(g,L,20,8,2,1);
+ P(g,S,6,4,1,6);
+ P(g,S,9,4,1,1);P(g,S,12,5,1,1);P(g,S,15,4,1,1);P(g,S,18,6,1,1);
+ P(g,S,10,7,1,1);P(g,S,13,8,1,1);P(g,S,16,7,1,1);P(g,S,8,6,1,1);
+ P(g,S,11,9,1,1);P(g,S,14,10,1,1);
+ P(g,D,11,0,3,1);P(g,D,10,1,5,1);
+ P(g,F,7,8,2,2);
+ P(g,F,11,12,2,1);P(g,F,15,12,2,1);
+ P(g,F,21,4,2,5);
+ P(g,F,23,2,3,3);P(g,F,23,5,2,3);P(g,F,23,8,3,3);
+ P(g,'#c9463c',3,5,2,2);P(g,'#ffffff',3,5,1,1);
+ P(g,S,2,7,1,1);
+});
 FISH_SPR.BREAM=spr(26,15,function(g){
  const B='#b5a86e',D='#6b5e32',L='#e8e2c6';
  P(g,B,8,3,7,1);P(g,B,6,4,12,1);P(g,B,4,5,15,1);
@@ -214,6 +241,29 @@ FISH_SPR.BREAM=spr(26,15,function(g){
  P(g,D,23,5,3,3);P(g,D,23,9,3,3);P(g,D,22,6,2,4);
  P(g,D,9,13,3,1);P(g,D,15,12,2,1);P(g,D,17,11,2,1);
  P(g,'#101010',3,7,2,2);P(g,'#ffffff',3,7,1,1);
+});
+FISH_SPR.SANDALIQUE=spr(28,16,function(g){
+ /* sandal per user sketch: chunky brown plank sole, small green toe block,
+    mid green block, light-green top strip, big tilted heel strap at the end */
+ const C={G:'#44603a',L:'#8aa579',B:'#5c5344'};
+ const M=[
+ '............................',
+ '............................',
+ '........................GGG.',
+ '.......................GGGG.',
+ '..........GGGG........GGGG..',
+ '..........GGGG........GGGG..',
+ '..........GGGGLLLLLLLGGGG...',
+ '...GGGG...GGGGLLLLLLGGGG....',
+ '...GGGG...GGGG.....GGGG.....',
+ '...GGGG...GGGG.....GGGG.....',
+ '..BBBBBBBBBBBBBBBBBBBBBBBBB.',
+ '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
+ '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
+ '.BBBBBBBBBBBBBBBBBBBBBBBBBBB',
+ '..BBBBBBBBBBBBBBBBBBBBBBBBB.',
+ '....BBBBBBBBBBBBBBBBBBBB....'];
+ for(let y=0;y<M.length;y++)for(let x=0;x<M[y].length;x++){const ch=M[y].charAt(x);if(C[ch])P(g,C[ch],x,y,1,1);}
 });
 
 /* ================= BACKGROUND ================= */
@@ -510,7 +560,8 @@ function update(now,dt){
    break;
   case 'hooked':
    if(now-stT>=HOOK_MS){
-    fishCount++;totalFish++;stats[fishCur.n]=(stats[fishCur.n]||0)+1;setState('caught');
+    if(!fishCur.junk){fishCount++;totalFish++;stats[fishCur.n]=(stats[fishCur.n]||0)+1;}
+    setState('caught');
     tone(523,0.09,'square',0.18);tone(659,0.09,'square',0.18,0,0.09);tone(784,0.14,'square',0.18,0,0.18);
     vib([25,40,25]);
    }
@@ -727,7 +778,7 @@ function drawCards(now){
   dim(0.55);
   const sp=FISH_SPR[fishCur.n],sc=4;
   ctx.drawImage(sp,Math.round(W/2-sp.width*sc/2),Math.round(H*0.30-sp.height*sc/2),sp.width*sc,sp.height*sc);
-  text(fishCur.n,W/2,Math.round(H*0.47),2,'#ffd75e','c');
+  text(fishCur.n,W/2,Math.round(H*0.47),2,fishCur.junk?'#c9b6e0':'#ffd75e','c');
   text(sizeCur+' CM',W/2,Math.round(H*0.47)+18,1,'#eef6fa','c');
   text('HOOK '+lastReact+' MS',W/2,Math.round(H*0.47)+30,1,'#9fd4e8','c');
  }
