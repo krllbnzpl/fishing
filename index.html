@@ -767,7 +767,7 @@ function update(now,dt){
     vib([25,40,25]);
    }
    break;
-  case 'caught':if(now-stT>2000)endCatch();break;
+  case 'caught':break;/* stays until player taps: time to screenshot the catch */
   case 'missed':break;/* fish gone: float stays dead in water, no bites until player retrieves */
   case 'retrieve':
    if(!retDrop&&now-stT>320){retDrop=true;splash(F.x-1,F.y+2,5);splashSnd(0.06);}
@@ -990,6 +990,7 @@ function drawCards(now){
   text(fishCur.n,W/2,Math.round(H*0.47),2,fishCur.junk?'#c9b6e0':'#ffd75e','c');
   text(sizeCur+' CM',W/2,Math.round(H*0.47)+18,1,'#eef6fa','c');
   text('HOOK '+lastReact+' MS',W/2,Math.round(H*0.47)+30,1,'#9fd4e8','c');
+  if(now-stT>1200){ctx.globalAlpha=0.6+0.3*Math.sin(now/450);textO('TAP TO CONTINUE',W/2,H-14,1,'#eef6fa','c');ctx.globalAlpha=1;}/* hint after 1.2s: instant screenshots stay clean */
  }
  if(state==='leveldone'){
   dim(0.5);
