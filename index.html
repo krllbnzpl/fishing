@@ -800,14 +800,15 @@ function drawHUD(now){
 
 /* ================= END-OF-RUN STATS ================= */
 function drawStatsBox(y0){
- const w=112,rh=18,x=Math.round(W/2-w/2),h=FISH_ORDER.length*rh+10;
+ const rows=FISH_ORDER.filter(k=>!FISH[k].junk||stats[k]>0);/* junk (sandal) shows only if caught, fish always */
+ const w=112,rh=18,x=Math.round(W/2-w/2),h=rows.length*rh+10;
  ctx.fillStyle='rgba(8,12,20,0.55)';ctx.fillRect(x,y0,w,h);
  ctx.fillStyle='rgba(255,255,255,0.25)';
  ctx.fillRect(x,y0,w,1);ctx.fillRect(x,y0+h-1,w,1);
  ctx.fillRect(x,y0,1,h);ctx.fillRect(x+w-1,y0,1,h);
  let tot=0;
- for(let i=0;i<FISH_ORDER.length;i++){
-  const k=FISH_ORDER[i],c=stats[k]||0;tot+=c;
+ for(let i=0;i<rows.length;i++){
+  const k=rows[i],c=stats[k]||0;tot+=c;
   const sp=FISH_SPR[k];
   ctx.drawImage(sp,x+6,Math.round(y0+5+i*rh+(rh-sp.height)/2));
   text(k,x+42,y0+5+i*rh+6,1,c>0?'#eef6fa':'#74848f');
