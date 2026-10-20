@@ -119,27 +119,27 @@ const LEVELS=[
  sky:['#5f9ec7','#7fb9dc','#a9d9ec'],water:['#5b93b8','#4f86ac','#44789c','#3a6a8c'],
  hi:'#d6ecf2',refl:'rgba(190,225,230,0.22)',spark:'#e2f4f6',
  sc1:'#5d8f57',sc2:'#3a6b3f',g1:'#2f6b33',g2:'#234f27',cat:'#7a4f2b',
- pool:[['PERCH',0.24],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['CHEBAQUE',1]]},
+ pool:[['PERCH',0.23],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['BRA',0.01],['CHEBAQUE',1]]},
 {name:'MOUNTAIN LAKE',win:315,scene:'mountain',biteMin:9000,biteMax:19000,
  sky:['#4a7fb5','#6d9cc9','#9dc0de'],water:['#4a7ba6','#3f6d97','#356088','#2c5277'],
  hi:'#dfe9f2',refl:'rgba(215,232,240,0.20)',spark:'#e8f2fa',
  m1:'#7d95ad',m2:'#4a6580',g1:'#2e5d4a',g2:'#224738',cat:'#6b4f2b',
- pool:[['PERCH',0.24],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['CHEBAQUE',1]]},
+ pool:[['PERCH',0.23],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['BRA',0.01],['CHEBAQUE',1]]},
 {name:'CITY POND',win:285,scene:'city',biteMin:8000,biteMax:18000,
  sky:['#3a2f5e','#7a4468','#d98a5a'],water:['#3a4a66','#33415a','#2c3850','#253046'],
  hi:'#f0b080',refl:'rgba(255,150,80,0.30)',spark:'#ffd9a0',
  b1:'#2a2438',b2:'#3a3150',g1:'#1e2a24',g2:'#15201b',cat:'#4a3320',
- pool:[['PERCH',0.24],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['CHEBAQUE',1]]},
+ pool:[['PERCH',0.23],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['BRA',0.01],['CHEBAQUE',1]]},
 {name:'SAND QUARRY',win:255,scene:'quarry',biteMin:8000,biteMax:18000,
  sky:['#8fc0e0','#b0d6ea','#d8ecf4'],water:['#57a08c','#4a9080','#3d7f73','#316d64'],
  hi:'#e9dca6',refl:'rgba(210,240,225,0.20)',spark:'#e6f6ec',
  d1:'#dcc890',d2:'#c6ab72',d3:'#ad9058',p1:'#2e5533',p2:'#4f7a40',g1:'#8a9a4a',g2:'#67763a',cat:'#a08850',
- pool:[['PERCH',0.24],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['CHEBAQUE',1]]},
+ pool:[['PERCH',0.23],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['BRA',0.01],['CHEBAQUE',1]]},
 {name:'VILLAGE POND',win:240,scene:'village',biteMin:8000,biteMax:18000,
  sky:['#6fa8cf','#95c3dd','#c9e2ea'],water:['#5590b5','#4983a9','#3e7599','#336686'],
  hi:'#69a4c9',refl:'rgba(200,228,242,0.22)',spark:'#e4f2f8',
  g1:'#3f7a3a',g2:'#2d5c2b',cat:'#6b5230',
- pool:[['PERCH',0.24],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['CHEBAQUE',1]]}
+ pool:[['PERCH',0.23],['CRUCIAN',0.205],['CARP',0.205],['BREAM',0.205],['PIKE',0.05],['SANDALIQUE',0.04],['TROUT',0.035],['BRA',0.01],['CHEBAQUE',1]]}
 ];
 const FISH={
  PERCH:{n:'PERCH',s0:18,s1:38,len:10},
@@ -149,9 +149,10 @@ const FISH={
  TROUT:{n:'TROUT',s0:22,s1:48,len:12},
  CHEBAQUE:{n:'CHEBAQUE',s0:12,s1:26,len:8},
  BREAM:{n:'BREAM',s0:35,s1:70,len:15},
- SANDALIQUE:{n:'SANDALIQUE',s0:24,s1:31,len:13,junk:1}
+ SANDALIQUE:{n:'SANDALIQUE',s0:24,s1:31,len:13,junk:1},
+ BRA:{n:'BRA',s0:70,s1:95,len:9,junk:1}
 };
-const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','SANDALIQUE','PIKE','TROUT','CHEBAQUE'];/* stats display order: common -> rare */
+const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','SANDALIQUE','PIKE','TROUT','CHEBAQUE','BRA'];/* stats display order: common -> rare */
 
 /* ================= FISH SPRITES ================= */
 function spr(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c;}
@@ -167,6 +168,26 @@ FISH_SPR.PERCH=spr(24,12,function(g){
  P(g,D,7,4,1,5);
  P(g,Fc,9,9,3,2);
  P(g,Fc,21,3,3,3);P(g,Fc,21,7,3,3);P(g,Fc,20,4,2,5);
+});
+FISH_SPR.BRA=spr(22,14,function(g){
+ /* bra (super rare junk): redrawn per ref — tall thin straps (half the height), deep dome cups, steep V valley, light-red highlights */
+ const C={R:'#e5301f',L:'#f16a55'};
+ const M=[
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RR..............RR..',
+ '..RRRR..........RRRR..',
+ 'RRRRRRR........RRRRRRR',
+ 'RRRRRLLR......RLLRRRRR',
+ 'RRRRRLLLR....RLLLRRRRR',
+ 'RRRRRLLLRR..RRLLLRRRRR',
+ 'RRRRRRRRRRLLRRRRRRRRRR',
+ 'RRRRRRRRRRLLRRRRRRRRRR'];
+ for(let y=0;y<M.length;y++)for(let x=0;x<M[y].length;x++){const ch=M[y].charAt(x);if(C[ch])P(g,C[ch],x,y,1,1);}
 });
 FISH_SPR.CRUCIAN=spr(22,12,function(g){
  const B='#c9963f',D='#8a6423',L='#ecd394',Fc='#6e5426';
@@ -424,6 +445,7 @@ function buildBG(){
  for(let i=0;i<22;i++)spark.push({x:(R()*W)|0,y:HY+4+((R()*(wh-8))|0),p:R()*6.28});
  currents=[];
  for(let i=0;i<3;i++)currents.push({y:HY+10+((R()*(wh-18))|0),x0:R()*W,len:6+((R()*8)|0),sp:0.002+R()*0.004});
+ df.mode='hidden';df.next=performance.now()+rand(3500,9000);/* reset the dragonfly tour on every scene (re)build */
 }
 
 /* ================= FOREGROUND GRASS ================= */
@@ -520,6 +542,117 @@ function drawFloatAt(x,y,restY){
   P(ctx,'rgba(255,255,255,0.5)',x+3,restY,2,1);
  }
 }
+/* ================= DRAGONFLY ================= */
+/* ambient visitor: flies in, lands on a reed, then the float antenna, then the rod tip;
+   startles away (off-screen or back to the reed) on cast/bite/hook; never visits the city */
+let df={mode:'hidden',next:0,x:0,y:0,sx:0,sy:0,cx:0,cy:0,tx:0,ty:0,t0:0,dur:1,perch:null,side:0,until:0,dir:1};
+function dfSceneOK(){
+ const L=LEVELS[level]||LEVELS[LEVELS.length-1];
+ return L.scene!=='city';/* no dragonflies over the city pond */
+}
+/* cattail head tips on the foreground grass (same math as grassClump) */
+function reedPerches(now){
+ const gh=Math.round(H*0.085),out=[];
+ for(let side=0;side<2;side++)for(const i of[2,5]){
+  const bx=side?W-2-i*2:2+i*2;
+  const h=Math.round(gh*0.45+((i*37)%Math.round(gh*0.55)));
+  if(h<=gh*0.55)continue;
+  const sw=Math.sin(now/650+i*1.7)*(0.8+i*0.14);
+  out.push({x:Math.round(bx+sw),y:H-h-4,side:side});
+ }
+ return out;
+}
+/* live anchor position of the current perch (tracks sway/bob every frame) */
+function perchPos(now){
+ if(df.perch==='reed'){
+  const ps=reedPerches(now);
+  const p=ps.length?ps[df.side%ps.length]:null;
+  if(!p)return null;
+  return {x:p.x-2,y:p.y-2,dir:p.side?-1:1};
+ }
+ const tp=rodTip(now);
+ if(df.perch==='antenna'){
+  const fp=floatPos(now,tp);
+  return {x:Math.round(fp.x)+2,y:Math.round(fp.y)-14,dir:-1};
+ }
+ return {x:Math.round(tp.x)+3,y:Math.round(tp.y)-3,dir:-1};/* rod tip */
+}
+function dfFlyTo(now,target,opt1,opt2){
+ df.mode='fly';df.t0=now;df.perch=(target==='away')?null:target;
+ df.sx=df.x;df.sy=df.y;
+ if(target==='away'){df.tx=opt1;df.ty=opt2;}
+ else{
+  if(target==='reed')df.side=opt1||0;
+  const pp=perchPos(now);
+  if(pp){df.tx=pp.x;df.ty=pp.y;}
+  else{df.tx=df.x<W/2?-24:W+24;df.ty=rand(HY,H*0.4);df.perch=null;}
+ }
+ const d=Math.hypot(df.tx-df.sx,df.ty-df.sy);
+ df.dur=clamp(d*7,850,2300);
+ df.cx=(df.sx+df.tx)/2+rand(-18,18);
+ df.cy=Math.min(df.sy,df.ty)-Math.max(14,d*0.28);/* arc above the straight line */
+ if(df.tx!==df.sx)df.dir=df.tx>df.sx?1:-1;
+}
+function dfEnter(now){
+ df.x=Math.random()<0.5?-14:W+14;
+ df.y=rand(HY+8,H*0.42);
+ const ps=reedPerches(now);
+ if(!ps.length){df.mode='hidden';df.next=now+5000;return;}
+ dfFlyTo(now,'reed',(Math.random()*ps.length)|0);
+}
+/* startle: on cast/bite/hook -> fly off-screen or retreat to the reed (the reed itself is safe) */
+function dfFlee(now){
+ if(df.mode!=='fly'&&df.mode!=='perch')return;
+ if(!dfSceneOK()){df.mode='hidden';return;}
+ if(df.perch==='reed')return;/* on the reed or already retreating there: safe */
+ const ps=reedPerches(now);
+ if(Math.random()<0.5&&ps.length)dfFlyTo(now,'reed',(Math.random()*ps.length)|0);
+ else dfFlyTo(now,'away',df.x<W/2?-24:W+24,rand(HY,H*0.4));
+}
+function updateDragonfly(now){
+ if(!dfSceneOK()){df.mode='hidden';return;}
+ if(df.mode==='hidden'){
+  if(now>=df.next&&(state!=='intro'||now-stT>900))dfEnter(now);
+  return;
+ }
+ if(df.mode==='fly'){
+  const t=clamp((now-df.t0)/df.dur,0,1),u=1-t;
+  df.x=u*u*df.sx+2*u*t*df.cx+t*t*df.tx;
+  df.y=u*u*df.sy+2*u*t*df.cy+t*t*df.ty;
+  if(t>=1){
+   if(df.perch){df.mode='perch';df.until=now+rand(2800,6200);}
+   else{df.mode='hidden';df.next=now+rand(7000,16000);}
+  }
+  return;
+ }
+ /* perched: track the moving perch, hop along the tour reed -> antenna -> rod */
+ const pp=perchPos(now);
+ if(!pp){dfFlyTo(now,'away',df.x<W/2?-24:W+24,rand(HY,H*0.4));return;}
+ df.x=pp.x;df.y=pp.y;df.dir=pp.dir;
+ if(now>=df.until){
+  if(df.perch==='reed')dfFlyTo(now,'antenna');
+  else if(df.perch==='antenna')dfFlyTo(now,'rod');
+  else{
+   const ps=reedPerches(now);
+   if(ps.length&&Math.random()<0.6)dfFlyTo(now,'reed',(Math.random()*ps.length)|0);
+   else dfFlyTo(now,'away',df.x<W/2?-24:W+24,rand(HY,H*0.4));
+  }
+ }
+}
+function drawDragonfly(now){
+ if(df.mode==='hidden')return;
+ const x=Math.round(df.x),y=Math.round(df.y),d=df.dir;
+ if(x<-14||x>W+14)return;
+ const fly=df.mode==='fly';
+ const up=fly?(((now/70)|0)%2===0):((now%2800)>260);/* perched: brief flutter every ~3s */
+ const B='#17798c',D='#0a3a46',WG='rgba(238,250,255,0.9)',WG2='rgba(198,236,244,0.78)',E='#0c2228';
+ const m=function(dx,dy,w,h,c){P(ctx,c,x+(d>0?dx:-(dx+w)+1),y+dy,w,h);};
+ if(up){m(2,-1,3,1,WG);m(1,0,2,1,WG2);}else{m(2,2,3,1,WG);m(1,2,2,1,WG2);}
+ m(0,1,1,1,E);/* head */
+ m(1,1,2,1,B);/* thorax */
+ m(3,1,3,1,B);m(4,1,1,1,D);/* tail */
+}
+
 /* ================= GAME STATE ================= */
 let state='intro',stT=0,level=0,worms=10,fishCount=0,totalFish=0,castsMade=0,stats={};
 let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false,rareCatch=false;
@@ -551,12 +684,14 @@ function doCast(now){
  if(worms<=0)return;
  worms--;castsMade++;baitOn=true;
  setState('casting');
+ dfFlee(now);/* the cast startles the dragonfly off rod/antenna */
  tone(240,0.18,'sawtooth',0.1,-140);
 }
 function doHook(now){
  lastReact=Math.max(1,Math.round(performance.now()-stT));
  baitOn=false;/* bait goes with the fish */
  setState('hooked');
+ dfFlee(now);/* hooking startles the dragonfly */
  splash(F.x,F.y,16);splashSnd(0.24);
  tone(520,0.07,'square',0.16);tone(780,0.07,'square',0.16,0,0.07);
 }
@@ -608,6 +743,7 @@ function update(now,dt){
   case 'waiting':
    if(now>=biteAt){
     biteEnd=now+L.win;setState('bite');
+    dfFlee(now);/* the bite scares the dragonfly off the float/rod */
     rings.push({x:F.x,y:F.y+1,r:1,age:0,life:800});
     tone(950,0.06,'square',0.2);tone(700,0.06,'square',0.16,0,0.07);
     vib(60);
@@ -623,7 +759,9 @@ function update(now,dt){
     stats[fishCur.n]=(stats[fishCur.n]||0)+1;
     rareCatch=fishCur.n==='TROUT';/* trout: instant level pass */
     setState('caught');
-    tone(523,0.09,'square',0.18);tone(659,0.09,'square',0.18,0,0.09);tone(784,0.14,'square',0.18,0,0.18);
+    if(fishCur.n==='BRA')/* cheeky boing jingle for the bra */
+     {tone(262,0.1,'triangle',0.22,140);tone(392,0.1,'triangle',0.22,160,0.09);tone(523,0.12,'square',0.2,0,0.19);tone(784,0.2,'square',0.18,0,0.27);}
+    else{tone(523,0.09,'square',0.18);tone(659,0.09,'square',0.18,0,0.09);tone(784,0.14,'square',0.18,0,0.18);}
     vib([25,40,25]);
    }
    break;
@@ -647,6 +785,7 @@ function update(now,dt){
   const r=rings[i];r.age+=dt;r.r+=dt*0.010;
   if(r.age>r.life)rings.splice(i,1);
  }
+ updateDragonfly(now);
 }
 
 /* ================= DRAW HELPERS ================= */
@@ -894,6 +1033,7 @@ function render(now){
  }
  drawParts();
  drawGrass(now);
+ drawDragonfly(now);
  drawHUD(now);
  drawCards(now);
 }
