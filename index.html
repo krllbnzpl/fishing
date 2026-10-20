@@ -151,7 +151,7 @@ const FISH={
  BREAM:{n:'BREAM',s0:35,s1:70,len:15},
  SANDALIQUE:{n:'SANDALIQUE',s0:24,s1:31,len:13,junk:1}
 };
-const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','PIKE','TROUT','CHEBAQUE'];/* stats display order: common -> rare */
+const FISH_ORDER=['PERCH','CRUCIAN','CARP','BREAM','SANDALIQUE','PIKE','TROUT','CHEBAQUE'];/* stats display order: common -> rare */
 
 /* ================= FISH SPRITES ================= */
 function spr(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c;}
@@ -309,8 +309,7 @@ function buildBG(){
   P(b,'#ffb347',Math.round(W*0.30),HY-5,5,4);
   P(b,'#ffd98a',Math.round(W*0.30)+1,HY-4,3,2);
  }else if(L.scene==='village'){
-  P(b,'#fff3b0',Math.round(W*0.84),Math.round(HY*0.16),4,4);
-  P(b,'#fffce0',Math.round(W*0.84)+1,Math.round(HY*0.16)+1,2,2);
+  /* sun removed: it collided with the fish counter HUD */
   P(b,'rgba(255,255,255,0.85)',Math.round(W*0.14),Math.round(HY*0.30),9,2);
   P(b,'rgba(255,255,255,0.85)',Math.round(W*0.14)+2,Math.round(HY*0.30)-1,4,1);
   P(b,'rgba(255,255,255,0.70)',Math.round(W*0.48),Math.round(HY*0.45),7,1);
@@ -523,7 +522,7 @@ function drawFloatAt(x,y,restY){
 }
 /* ================= GAME STATE ================= */
 let state='intro',stT=0,level=0,worms=10,fishCount=0,totalFish=0,castsMade=0,stats={};
-let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false;
+let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false,rareCatch=false;
 let parts=[],rings=[];
 let lastT=0,lastF=0;
 function setState(s){state=s;stT=performance.now();if(s==='retrieve')retDrop=false;}
@@ -574,7 +573,8 @@ function goReady(){
  }else setState('ready');
 }
 function endCatch(){
- if(fishCount>=GOAL){
+ if(fishCount>=GOAL||rareCatch){/* trout pass: level counts as done regardless of fishCount */
+  rareCatch=false;
   setState('leveldone');
   tone(523,0.09,'square',0.18);tone(659,0.09,'square',0.18,0,0.09);
   tone(784,0.09,'square',0.18,0,0.18);tone(1046,0.2,'square',0.18,0,0.27);
@@ -590,8 +590,8 @@ function nextLevel(){
   worms=10;fishCount=0;buildBG();setState('intro');
  }
 }
-function retryLevel(){worms=10;fishCount=0;stats={};buildBG();setState('intro');}
-function resetAll(){level=0;totalFish=0;worms=10;fishCount=0;castsMade=0;stats={};buildBG();setState('intro');}
+function retryLevel(){worms=10;fishCount=0;stats={};rareCatch=false;buildBG();setState('intro');}
+function resetAll(){level=0;totalFish=0;worms=10;fishCount=0;castsMade=0;stats={};rareCatch=false;buildBG();setState('intro');}
 
 /* ================= UPDATE ================= */
 function update(now,dt){
@@ -619,7 +619,9 @@ function update(now,dt){
    break;
   case 'hooked':
    if(now-stT>=HOOK_MS){
-    if(!fishCur.junk){fishCount++;totalFish++;stats[fishCur.n]=(stats[fishCur.n]||0)+1;}
+    if(!fishCur.junk){fishCount++;totalFish++;}/* junk shows in stats but never counts toward GOAL */
+    stats[fishCur.n]=(stats[fishCur.n]||0)+1;
+    rareCatch=fishCur.n==='TROUT';/* trout: instant level pass */
     setState('caught');
     tone(523,0.09,'square',0.18);tone(659,0.09,'square',0.18,0,0.09);tone(784,0.14,'square',0.18,0,0.18);
     vib([25,40,25]);
@@ -792,7 +794,7 @@ function drawHUD(now){
  const fs=String(fishCount+'/'+GOAL);
  text(fs,W-17,5,1,'#f2f7f9','r');
  drawFishIcon(W-17-(fs.length*4-1)-9,4);
- text('LEVEL '+(level+1),W/2,5,1,'#dfe9f0','c');
+ text('LEVEL '+Math.min(level+1,LEVELS.length),W/2,5,1,'#dfe9f0','c');
  drawSpeaker(W-11,4);
 }
 
@@ -823,7 +825,7 @@ function drawCards(now){
   ctx.globalAlpha=1;
  }
  if(state==='intro'){
-  const t1='LEVEL '+(level+1),t2=LEVELS[level].name;
+  const t1='LEVEL '+Math.min(level+1,LEVELS.length),t2=LEVELS[level].name;
   const w=Math.max(t1.length*8,t2.length*4)+14;
   const bx=Math.round(W/2-w/2),by=Math.round(H*0.34);
   ctx.fillStyle='rgba(8,12,20,0.55)';ctx.fillRect(bx,by,w,36);
@@ -836,7 +838,9 @@ function drawCards(now){
  if(state==='caught'){
   dim(0.55);
   const sp=FISH_SPR[fishCur.n],sc=4;
-  ctx.drawImage(sp,Math.round(W/2-sp.width*sc/2),Math.round(H*0.30-sp.height*sc/2),sp.width*sc,sp.height*sc);
+  const spTop=Math.round(H*0.30-sp.height*sc/2);
+  ctx.drawImage(sp,Math.round(W/2-sp.width*sc/2),spTop,sp.width*sc,sp.height*sc);
+  if(rareCatch)text('RARE CATCH!',W/2,spTop-16,2,blink(now,280)?'#fff3b0':'#ffd75e','c');
   text(fishCur.n,W/2,Math.round(H*0.47),2,fishCur.junk?'#c9b6e0':'#ffd75e','c');
   text(sizeCur+' CM',W/2,Math.round(H*0.47)+18,1,'#eef6fa','c');
   text('HOOK '+lastReact+' MS',W/2,Math.round(H*0.47)+30,1,'#9fd4e8','c');
