@@ -655,7 +655,7 @@ function drawDragonfly(now){
 
 /* ================= GAME STATE ================= */
 let state='intro',stT=0,level=0,worms=10,fishCount=0,totalFish=0,castsMade=0,stats={};
-let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false,rareCatch=false;
+let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false,rareCatch=false,reactSum=0,reactN=0,lenSum=0;
 let parts=[],rings=[];
 let lastT=0,lastF=0;
 function setState(s){state=s;stT=performance.now();if(s==='retrieve')retDrop=false;}
@@ -725,8 +725,8 @@ function nextLevel(){
   worms=10;fishCount=0;buildBG();setState('intro');
  }
 }
-function retryLevel(){worms=10;fishCount=0;stats={};rareCatch=false;buildBG();setState('intro');}
-function resetAll(){level=0;totalFish=0;worms=10;fishCount=0;castsMade=0;stats={};rareCatch=false;buildBG();setState('intro');}
+function retryLevel(){worms=10;fishCount=0;stats={};reactSum=0;reactN=0;lenSum=0;rareCatch=false;buildBG();setState('intro');}
+function resetAll(){level=0;totalFish=0;worms=10;fishCount=0;castsMade=0;stats={};reactSum=0;reactN=0;lenSum=0;rareCatch=false;buildBG();setState('intro');}
 
 /* ================= UPDATE ================= */
 function update(now,dt){
@@ -757,6 +757,8 @@ function update(now,dt){
    if(now-stT>=HOOK_MS){
     if(!fishCur.junk){fishCount++;totalFish++;}/* junk shows in stats but never counts toward GOAL */
     stats[fishCur.n]=(stats[fishCur.n]||0)+1;
+    reactSum+=lastReact;reactN++;/* avg hook reaction over all catches */
+    if(!fishCur.junk)lenSum+=sizeCur;/* total cm of real fish (junk skips) */
     rareCatch=fishCur.n==='TROUT';/* trout: instant level pass */
     setState('caught');
     if(fishCur.n==='BRA')/* cheeky boing jingle for the bra */
@@ -940,7 +942,7 @@ function drawHUD(now){
 /* ================= END-OF-RUN STATS ================= */
 function drawStatsBox(y0){
  const rows=FISH_ORDER.filter(k=>!FISH[k].junk||stats[k]>0);/* junk (sandal) shows only if caught, fish always */
- const w=112,rh=18,x=Math.round(W/2-w/2),h=rows.length*rh+10;
+ const w=112,rh=18,x=Math.round(W/2-w/2),h=rows.length*rh+56;
  ctx.fillStyle='rgba(8,12,20,0.55)';ctx.fillRect(x,y0,w,h);
  ctx.fillStyle='rgba(255,255,255,0.25)';
  ctx.fillRect(x,y0,w,1);ctx.fillRect(x,y0+h-1,w,1);
@@ -953,7 +955,11 @@ function drawStatsBox(y0){
   text(k,x+42,y0+5+i*rh+6,1,c>0?'#eef6fa':'#74848f');
   text('X'+c,x+w-6,y0+5+i*rh+6,1,c>0?'#ffd75e':'#74848f','r');
  }
- text('TOTAL: '+tot,W/2,y0+h+7,1,'#ffd75e','c');
+ const fy=y0+rows.length*rh+15;/* run totals footer inside the box */
+ ctx.fillRect(x+1,fy,w-2,1);
+ text('TOTAL',x+6,fy+6,1,'#ffd75e');text(String(tot),x+w-6,fy+6,1,'#ffd75e','r');
+ text('AVG HOOK',x+6,fy+19,1,'#9fd4e8');text(reactN?Math.round(reactSum/reactN)+' MS':'-',x+w-6,fy+19,1,'#9fd4e8','r');
+ text('TOTAL LEN',x+6,fy+32,1,'#eef6fa');text(lenSum+' CM',x+w-6,fy+32,1,'#eef6fa','r');
  return h;
 }
 
@@ -992,18 +998,20 @@ function drawCards(now){
  }
  if(state==='gameover'){
   dim(0.62);
-  const sy=Math.round(H*0.14)+26;
-  text('OUT OF WORMS!',W/2,Math.round(H*0.14),2,'#ff8b7b','c');
+  const boxH=FISH_ORDER.filter(k=>!FISH[k].junk||stats[k]>0).length*18+56;
+  const sy=Math.max(18,Math.min(H-53-boxH,Math.round(H*0.10)+24));/* adaptive: fits short windows */
+  text('OUT OF WORMS!',W/2,Math.max(4,sy-16),2,'#ff8b7b','c');
   const ph=drawStatsBox(sy);
-  text('THIS LEVEL '+fishCount+'/'+GOAL,W/2,sy+ph+24,1,'#9fd4e8','c');
-  if(blink(now))text('TAP TO RETRY',W/2,Math.round(H*0.80),1,'#eef6fa','c');
+  text('THIS LEVEL '+fishCount+'/'+GOAL,W/2,sy+ph+12,1,'#9fd4e8','c');
+  if(blink(now))text('TAP TO RETRY',W/2,H-16,1,'#eef6fa','c');
  }
  if(state==='win'){
   dim(0.62);
-  const sy=Math.round(H*0.12)+24;
-  text('YOU WIN!',W/2,Math.round(H*0.12),2,'#ffd75e','c');
+  const boxH=FISH_ORDER.filter(k=>!FISH[k].junk||stats[k]>0).length*18+56;
+  const sy=Math.max(8,Math.min(H-30-boxH,Math.round(H*0.12)+24));/* adaptive: fits short windows */
+  text('YOU WIN!',W/2,Math.max(6,sy-18),2,'#ffd75e','c');
   drawStatsBox(sy);
-  if(blink(now))text('TAP TO PLAY AGAIN',W/2,Math.round(H*0.80),1,'#eef6fa','c');
+  if(blink(now))text('TAP TO PLAY AGAIN',W/2,H-16,1,'#eef6fa','c');
  }
 }
 
