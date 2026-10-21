@@ -445,7 +445,7 @@ function buildBG(){
  for(let i=0;i<22;i++)spark.push({x:(R()*W)|0,y:HY+4+((R()*(wh-8))|0),p:R()*6.28});
  currents=[];
  for(let i=0;i<3;i++)currents.push({y:HY+10+((R()*(wh-18))|0),x0:R()*W,len:6+((R()*8)|0),sp:0.002+R()*0.004});
- df.mode='hidden';df.next=performance.now()+rand(3500,9000);/* reset the dragonfly tour on every scene (re)build */
+ df.mode='hidden';df.next=performance.now()+rand(7000,18000);/* reset the dragonfly tour on every scene (re)build */
 }
 
 /* ================= FOREGROUND GRASS ================= */
@@ -612,7 +612,7 @@ function dfFlee(now){
 function updateDragonfly(now){
  if(!dfSceneOK()){df.mode='hidden';return;}
  if(df.mode==='hidden'){
-  if(now>=df.next&&(state!=='intro'||now-stT>900))dfEnter(now);
+  if(now>=df.next&&(state!=='intro'||now-stT>900)&&(level>0||worms<=5))dfEnter(now);/* level 1: no visitor until half the worms are spent */
   return;
  }
  if(df.mode==='fly'){
@@ -621,7 +621,7 @@ function updateDragonfly(now){
   df.y=u*u*df.sy+2*u*t*df.cy+t*t*df.ty;
   if(t>=1){
    if(df.perch){df.mode='perch';df.until=now+rand(2800,6200);}
-   else{df.mode='hidden';df.next=now+rand(7000,16000);}
+   else{df.mode='hidden';df.next=now+rand(14000,32000);}
   }
   return;
  }
