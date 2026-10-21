@@ -446,6 +446,8 @@ function buildBG(){
  currents=[];
  for(let i=0;i<3;i++)currents.push({y:HY+10+((R()*(wh-18))|0),x0:R()*W,len:6+((R()*8)|0),sp:0.002+R()*0.004});
  df.mode='hidden';df.next=performance.now()+rand(7000,18000);/* reset the dragonfly tour on every scene (re)build */
+ rain.on=false;rain.drops=[];rain.next=performance.now()+rand(9000,20000);/* city shower schedule resets with the scene */
+ rainAudio();
 }
 
 /* ================= FOREGROUND GRASS ================= */
@@ -653,6 +655,65 @@ function drawDragonfly(now){
  m(3,1,3,1,B);m(4,1,1,1,D);/* tail */
 }
 
+/* ================= RAIN (city only) ================= */
+/* the city pond has no dragonfly visitor: instead it rains here for most
+   of the time; showers begin a while into the level and come and go */
+let rain={on:false,next:0,drops:[]},rainSnd=null;
+function rainAudio(){/* soft looping noise, fades with the shower */
+ if(rain.on&&!muted){
+  if(rainSnd)return;
+  const a=actx();if(!a)return;
+  const n=(a.sampleRate*1.4)|0,buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const s=a.createBufferSource();s.buffer=buf;s.loop=true;
+  const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=760;
+  const g=a.createGain(),t0=a.currentTime;
+  g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.03,t0+1.6);
+  s.connect(f);f.connect(g);g.connect(a.destination);s.start();
+  rainSnd={s:s,g:g};
+ }else if(rainSnd){
+  const a=actx(),rs=rainSnd;rainSnd=null;
+  if(a){rs.g.gain.setTargetAtTime(0.0001,a.currentTime,0.22);try{rs.s.stop(a.currentTime+1);}catch(e){}}
+  else try{rs.s.stop();}catch(e){}
+ }
+}
+function newDrop(top){
+ const tg=rand(HY+4,H-3);
+ return {x:rand(-4,W+8),y:top?rand(-8,-1):rand(-8,tg-6),tg:tg,vy:rand(0.16,0.26),vx:rand(-0.055,-0.02)};
+}
+function updateRain(now,dt){
+ const L=LEVELS[level]||LEVELS[LEVELS.length-1];
+ if(L.scene!=='city')return;/* rain belongs to the city pond only */
+ if(!rain.on&&now>=rain.next){/* shower begins: prefill the sky */
+  rain.on=true;rain.drops=[];
+  for(let i=0;i<70;i++)rain.drops.push(newDrop(false));
+  rain.next=now+rand(18000,34000);/* rains for most of the time */
+  rainAudio();
+ }else if(rain.on&&now>=rain.next){/* shower breaks off for a while */
+  rain.on=false;rain.next=now+rand(5000,11000);
+  rainAudio();
+ }
+ for(let i=rain.drops.length-1;i>=0;i--){
+  const d=rain.drops[i];
+  d.x+=d.vx*dt;d.y+=d.vy*dt;
+  if(d.y>=d.tg){
+   if(rain.on&&Math.random()<0.4)rings.push({x:Math.round(d.x),y:d.tg,r:0.6,age:0,life:520});
+   if(!rain.on){rain.drops.splice(i,1);continue;}/* shower over: drops drain out */
+   const nd=newDrop(true);d.x=nd.x;d.y=nd.y;d.tg=nd.tg;d.vy=nd.vy;d.vx=nd.vx;
+  }
+ }
+}
+function drawRain(){
+ if(!rain.drops.length)return;
+ for(const d of rain.drops){
+  const X=Math.round(d.x),Y=Math.round(d.y);
+  if(Y<-4||X<-2||X>W+2)continue;
+  P(ctx,'rgba(196,226,244,0.42)',X,Y,1,3);/* streak */
+  P(ctx,'rgba(238,248,255,0.7)',X,Y+2,1,1);/* bright head */
+  P(ctx,'rgba(196,226,244,0.25)',X+1,Y-2,1,2);/* wind tail */
+ }
+}
+
 /* ================= GAME STATE ================= */
 let state='intro',stT=0,level=0,worms=10,fishCount=0,totalFish=0,castsMade=0,stats={};
 let biteAt=0,biteEnd=0,fishCur=null,sizeCur=0,nextRing=0,lastReact=0,retDrop=false,baitOn=false,rareCatch=false,reactSum=0,reactN=0,lenSum=0;
@@ -788,6 +849,7 @@ function update(now,dt){
   if(r.age>r.life)rings.splice(i,1);
  }
  updateDragonfly(now);
+ updateRain(now,dt);
 }
 
 /* ================= DRAW HELPERS ================= */
@@ -1020,13 +1082,18 @@ function drawCards(now){
 function render(now){
  const L=LEVELS[level]||LEVELS[LEVELS.length-1];/* win state: level==length, fall back to last palette */
  ctx.drawImage(bg,0,0);
- for(const s of spark){ctx.globalAlpha=0.22+0.22*Math.sin(now/320+s.p);P(ctx,L.spark,s.x,s.y);}
+ const wet=L.scene==='city'&&rain.on;
+ if(!wet)for(const s of spark){ctx.globalAlpha=0.22+0.22*Math.sin(now/320+s.p);P(ctx,L.spark,s.x,s.y);}/* no sun glints under rain */
  ctx.globalAlpha=1;
  for(const c of currents){
   const x=((c.x0+now*c.sp)%(W+24))-12;
   ctx.globalAlpha=0.13;P(ctx,'#ffffff',Math.round(x),c.y,c.len,1);
  }
  ctx.globalAlpha=1;
+ if(wet){/* rain mood: grey wash over sky and water */
+  ctx.fillStyle='rgba(26,36,60,0.16)';ctx.fillRect(0,0,W,HY);
+  ctx.fillStyle='rgba(12,20,38,0.10)';ctx.fillRect(0,HY,W,H-HY);
+ }
  drawRings();
  const tp=rodTip(now);
  const fp=floatPos(now,tp);
@@ -1042,6 +1109,7 @@ function render(now){
  }
  drawParts();
  drawGrass(now);
+ drawRain();
  drawDragonfly(now);
  drawHUD(now);
  drawCards(now);
@@ -1050,7 +1118,7 @@ function render(now){
 /* ================= INPUT ================= */
 function tap(ix,iy){
  if(AC&&AC.state==='suspended')AC.resume();
- if(ix>=0&&ix>W-16&&iy<16){muted=!muted;return;}
+ if(ix>=0&&ix>W-16&&iy<16){muted=!muted;rainAudio();return;}
  const now=performance.now();
  switch(state){
   case 'intro':setState('ready');break;
