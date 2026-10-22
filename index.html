@@ -12,6 +12,9 @@
 <style>
 html,body{margin:0;padding:0;height:100%;background:#070a0e;overflow:hidden}
 body{display:flex;align-items:center;justify-content:center;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+/* Home Screen app (iOS standalone): keep the game clear of the status bar
+   and the home indicator; a normal browser tab is not affected */
+body.sa{box-sizing:border-box;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;outline:none}
 </style>
 </head>
@@ -25,8 +28,19 @@ let W=180,H=320,HY=38;const GOAL=5;
 const CAST_MS=950,HOOK_MS=850,RETR_MS=650;
 let F={x:90,y:176};
 let bg=null,spark=[],currents=[];
+function qnum(k){const m=location.search.match(new RegExp('[?&]'+k+'=(\\d+)'));return m?parseFloat(m[1]):null;}/* test hook: ?sat=59 etc */
 function resize(){
-  const vw=window.innerWidth,vh=window.innerHeight;
+  let vw=window.innerWidth,vh=window.innerHeight;
+  /* standalone Home Screen app: fit between the iOS status bar and the home
+     indicator (safe-area insets); a regular browser tab keeps full screen */
+  const sa=navigator.standalone===true||!!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||/[?&]sa=1/.test(location.search);
+  if(document.body)document.body.classList.toggle('sa',sa);
+  if(sa){
+   const cs=getComputedStyle(document.body);
+   const gv=function(px,q){const o=qnum(q);return o!==null?o:(px||0);};
+   vw=Math.max(120,vw-gv(parseFloat(cs.paddingLeft),'sal')-gv(parseFloat(cs.paddingRight),'sar'));
+   vh=Math.max(160,vh-gv(parseFloat(cs.paddingTop),'sat')-gv(parseFloat(cs.paddingBottom),'sab'));
+  }
   const asp=vh/Math.max(1,vw);
   const iw=180,ih=Math.round(iw*Math.min(Math.max(asp,1.55),2.25));
   W=iw;H=ih;
